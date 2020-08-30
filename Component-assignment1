@@ -1,0 +1,242 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+struct node
+{
+  char name[30];
+  char club[30];
+  int goals;
+  struct node* link;
+};
+typedef struct node NODE;
+NODE *newnode,*start=NULL,*currptr,*ptr,*temp;
+int count = 0;
+NODE *getnode()
+{
+  newnode=(NODE*)malloc(sizeof(NODE));
+  newnode->link=NULL;
+  printf("\nEnter the name of the player\n");
+  scanf("%s",newnode->name);
+  printf("\nEnter the club of the player\n");
+  scanf("%s",newnode->club);
+  printf("\nEnter the number of goals scored by the player\n");
+  scanf("%d",&newnode->goals);
+  printf("\n\n");
+  return newnode;
+}
+void insertbeg()
+{
+  temp=getnode();
+  count++;
+  if(start==NULL)
+    start=temp;
+  else
+  {
+    temp->link=start;
+    start=temp;
+  }
+}
+void insertend()
+{
+  temp=getnode();
+  count++;
+  if(start==NULL)
+    start=temp;
+  else
+  {
+    for(ptr=start;ptr->link!=NULL;ptr=ptr->link);
+    ptr->link=temp;
+  }
+}
+void insertpos()
+{
+  int pos,i,c=0;
+  printf("\n Enter position\n");
+  scanf("%d",&pos);
+  ptr=start;
+  while(ptr!=NULL)
+  {
+  ptr=ptr->link;
+  ++c;
+  }
+  if(pos==1)
+    insertbeg();
+  else if(pos>1&&pos<=c)
+  {
+    temp=getnode();
+    ptr=start;
+    for(i=1;i<pos-1;++i)
+    ptr=ptr->link;
+    temp->link=ptr->link;
+    ptr->link=temp;
+    count++;
+  }
+  else if(pos==c+1)
+    insertend();
+  else
+    printf("\n Invalid position \n");
+}
+
+
+void deletebeg()
+{
+  ptr=start;
+  if(start==NULL)
+    printf("\nList is empty\n");
+  else if(start->link==NULL)
+  {
+    start=NULL;
+    free(ptr);
+    count--;
+  }
+  else
+  {
+    start=start->link;
+    free(ptr);
+    count--;
+  }
+}
+
+
+void deleteend()
+{
+  ptr=start;
+  if(start==NULL)
+    printf("\nList is empty\n");
+  else if(start->link==NULL)
+  {
+    start=NULL;
+    free(ptr);
+    count--;
+  }
+  else
+  {
+    for(ptr=NULL,currptr=start;currptr->link!=NULL;ptr=currptr, currptr=currptr->link);
+    ptr->link=NULL;
+    free(currptr);
+    count--;
+  }
+}
+
+
+void deletepos()
+{
+  if(start==NULL)
+  {
+    printf("\nList is empty\n");
+    return ;
+  }
+  int pos,i,c=0;
+  printf("\n Enter position\n");
+  scanf("%d",&pos);
+  ptr=start;
+  while(ptr!=NULL)
+  {
+    ptr=ptr->link;
+    ++c;
+  }
+  if(pos==1)
+    deletebeg();
+  else if(pos>1&&pos<=c)
+  {
+    currptr=start;
+    for(i=1;i<pos;++i)
+    {
+      ptr=currptr;
+      currptr=currptr->link;
+    }
+    ptr->link=currptr->link;
+    free(currptr);
+    count--;
+  }
+  else if(pos==c+1)
+    insertend();
+  else
+    printf("\n Invalid position \n");
+}
+
+
+void display()
+{
+  if(start==NULL)
+    printf("\n List empty\n");
+  else
+  {
+    int i = 1;
+    printf("\n\n");
+    for(currptr=start;currptr!=NULL;currptr=currptr->link)
+    {
+      printf("\n  Player %d details:\n",i);
+      printf("\nPlayer name:    %s",currptr->name);
+      printf("\nPlayer club:    %s",currptr->club);
+      printf("\nPlayer goals:   %d",currptr->goals); 
+      ++i;   
+      printf("\n\n");
+    }
+    printf("\n\n");
+  }
+}
+
+
+void search_player()
+{
+  char player_name[30];
+  printf("\n Enter player name to be searched\n");
+  scanf("%s",player_name);
+  int i = 1,f=0;
+  currptr = start;
+  while(currptr!=NULL)
+  {
+    if(strcmp(currptr->name,player_name)==0)
+    {
+      printf("\n%s is in position %d",player_name,i);
+      return;
+    }
+    else
+    {
+      currptr = currptr->link;
+      ++i;
+    }
+  }
+  printf("\nPlayer not found.\n");
+}
+
+void number_of_players()
+{
+  printf("\nNumber of players is %d",count);
+}
+
+void average_goals_scored()
+{
+  int goals = 0;
+  currptr = start;
+  while(currptr!=NULL)
+  {
+    goals = goals + currptr->goals;
+    currptr = currptr->link;
+  }
+  printf("\nAverage number of goals is %d",(goals/count));
+}
+
+int main()
+{
+  insertpos();
+  display();
+  insertpos();  
+  display();
+  insertpos();
+  display();
+  insertpos();  
+  display();
+  insertpos();
+  display();
+  search_player();
+  search_player();
+  deletepos();
+  display();
+  deletepos();
+  display();
+  number_of_players();
+  average_goals_scored();
+  return 0;
+}
